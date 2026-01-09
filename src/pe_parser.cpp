@@ -16,12 +16,12 @@ static uint32_t read_u32(const std::vector<uint8_t>& b, size_t off) {
 PEInfo parsePEFromBytes(const std::vector<uint8_t>& bytes) {
     PEInfo info;
     const auto& b = bytes;
-    if (b.size() < 64) return info; // too small
+    if (b.size() < 64) return info; 
 
-    // Check DOS signature at offset 0: 'M' 'Z'
+    
     if (b[0] != 'M' || b[1] != 'Z') return info;
 
-    // e_lfanew is a 32-bit offset at 0x3C
+    
     uint32_t e_lfanew = read_u32(b, 0x3C);
     if (e_lfanew + 4 > b.size()) return info;
 
@@ -39,7 +39,7 @@ PEInfo parsePEFromBytes(const std::vector<uint8_t>& bytes) {
     size_t section_table_off = coff_off + 20 + size_of_opt_hdr;
     size_t section_size = 40;
     if (section_table_off + section_size * num_sections > b.size()) {
-        // if small, clamp
+        
         if (section_table_off > b.size()) return info;
     }
 
@@ -50,7 +50,7 @@ PEInfo parsePEFromBytes(const std::vector<uint8_t>& bytes) {
     for (uint16_t i = 0; i < num_sections; ++i) {
         size_t off = section_table_off + i * section_size;
         if (off + section_size > b.size()) break;
-        // Name: 8 bytes
+
         std::string name;
         for (size_t n = 0; n < 8; ++n) {
             char c = static_cast<char>(b[off + n]);

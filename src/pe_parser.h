@@ -8,4 +8,4 @@ namespace parsers {
 PEInfo parsePEFromFile(const std::string& path);
 PEInfo parsePEFromBytes(const std::vector<uint8_t>& bytes);
 
-} // namespace parsers
+} 

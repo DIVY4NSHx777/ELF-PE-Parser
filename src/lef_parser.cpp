@@ -21,11 +21,11 @@ LEFInfo parseLEFFromStream(std::istream& is) {
     LEFMacro currentMacro;
 
     while (std::getline(is, line)) {
-        // remove comments starting with '#'
+        
         auto posc = line.find('#');
         if (posc != std::string::npos) line = line.substr(0, posc);
 
-        // basic remove of inline comments '/* ... */' (single-line)
+        
         auto startC = line.find("/*");
         if (startC != std::string::npos) {
             auto endC = line.find("*/", startC+2);
@@ -39,11 +39,11 @@ LEFInfo parseLEFFromStream(std::istream& is) {
         line = trim(line);
         if (line.empty()) continue;
 
-        // Tokenize by whitespace and semicolon
+        
         std::istringstream ss(line);
         std::string tok;
         while (ss >> tok) {
-            // semi-trim trailing semicolon
+        
             if (!tok.empty() && tok.back() == ';') tok.pop_back();
             if (tok.empty()) continue;
 
@@ -61,7 +61,7 @@ LEFInfo parseLEFFromStream(std::istream& is) {
                         currentMacro = LEFMacro{};
                         currentMacro.name = macroName;
                     } else {
-                        // if name is on next line
+                        
                         if (std::getline(is, line)) {
                             std::istringstream ss2(line);
                             ss2 >> macroName;
@@ -80,31 +80,30 @@ LEFInfo parseLEFFromStream(std::istream& is) {
                         state = State::InPin;
                     }
                 } else if (tok == "END") {
-                    // Could be "END MACRO" or "END <name>"
-                    // close macro
+                    
                     info.macros.push_back(currentMacro);
                     currentMacro = LEFMacro{};
                     state = State::None;
                 } else {
-                    // ignore other tokens inside MACRO for this lightweight parser
+                    
                 }
             } else if (state == State::InPin) {
                 if (tok == "END") {
-                    // assume this ends PIN definition; read next token maybe 'PIN'
+                    
                     state = State::InMacro;
                 } else {
-                    // ignore pin internals for now
+                    
                 }
             }
         }
     }
 
-    // if a macro still open, close it
+    
     if (state == State::InMacro && !currentMacro.name.empty()) {
         info.macros.push_back(currentMacro);
     }
 
-    // deduplicate layers
+    
     std::sort(info.layers.begin(), info.layers.end());
     info.layers.erase(std::unique(info.layers.begin(), info.layers.end()), info.layers.end());
 

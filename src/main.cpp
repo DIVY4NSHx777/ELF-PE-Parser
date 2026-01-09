@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
         return 3;
     }
 
-    // Decide by extension: .lef -> lef, else try to parse as PE
+    
     std::filesystem::path p(path);
     auto ext = p.extension().string();
 
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
         }
         return 0;
     } else {
-        // Try PE
+        
         auto info = parsePEFromFile(path);
         if (!info.valid) {
             std::cout << "Not a valid PE or unsupported format.\n";
